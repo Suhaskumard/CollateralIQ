@@ -1,27 +1,28 @@
 import { useState, useRef, useEffect } from 'react';
 import { streamChat } from '../../services/api.js';
+import { useApp } from '../../context/AppContext.jsx';
 
 const PROMPTS = [
-  'What LTV should I offer on a leasehold property in Sarjapur?',
-  'Explain distress value discounts for NBFC enforcement',
-  'How does floor level impact collateral quality?',
-  'What is the resale index formula?',
-  'Compare prime vs peripheral micro-market risk',
-  'Generate a credit memo summary for a ₹80L apartment',
-  'RBI LTV guidelines for commercial property LAP',
-  'Red flags that warrant a legal review recommendation',
+  'Estimate value and resale risk for this 2BHK in Whitefield.',
+  'Why is the distress discount high?',
+  'What would change if the property were freehold with rental income?',
+  'Generate an underwriter summary in 5 bullet points.',
+  'What data is missing and how does it affect confidence?',
+  'Compare prime vs peripheral micro-market risk.',
+  'RBI LTV guidelines for commercial property LAP.',
+  'Red flags that warrant a legal review recommendation.',
 ];
 
 let msgId = 0;
 
 export default function Copilot() {
+  const { lastValuation } = useApp();
   const [messages, setMessages]   = useState([]);
   const [history, setHistory]     = useState([]);
   const [input, setInput]         = useState('');
   const [streaming, setStreaming] = useState(false);
   const bodyRef = useRef(null);
 
-  // Scroll to bottom whenever messages change
   useEffect(() => {
     if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
   }, [messages]);
@@ -41,10 +42,16 @@ export default function Copilot() {
     if (!msg || streaming) return;
     setInput('');
 
-    const userKey = addMsg('user', msg);
+    addMsg('user', msg);
     const newHistory = [...history, { role: 'user', content: msg }];
-    setHistory(newHistory);
 
+    // Inject case context if available
+    if (lastValuation && history.length === 0) {
+      const ctx = `[CONTEXT: Last valuation — ${lastValuation.address || 'Property'}, ${lastValuation.propertyType}/${lastValuation.subtype}, ${lastValuation.area}sqft, ${lastValuation.age}y, MV: ₹${lastValuation.mv_low}L-₹${lastValuation.mv_high}L, RI: ${lastValuation.resaleIndex}, Confidence: ${lastValuation.confidence}, Policy: ${lastValuation.policy}]`;
+      newHistory.unshift({ role: 'system', content: ctx });
+    }
+
+    setHistory(newHistory);
     setStreaming(true);
     const aiKey = ++msgId;
     setMessages(m => [...m, { key: aiKey, role: 'ai', content: '', typing: true }]);
@@ -81,8 +88,9 @@ export default function Copilot() {
   return (
     <>
       <div className="page-header">
-        <div className="page-eyebrow">Intelligence</div>
+        <div className="page-eyebrow">Intelligence · Underwriting Copilot</div>
         <div className="page-title">AI Copilot</div>
+        <div className="page-desc">Ask about valuations, explain scores, run scenarios, or generate credit memos</div>
       </div>
 
       <div className="chat-wrap">
@@ -90,18 +98,27 @@ export default function Copilot() {
         <div className="chat-box">
           <div className="chat-topbar">
             <div className="chat-av">✦</div>
-            <div>
-              <div className="chat-name">ValuAI Copilot</div>
-              <div className="chat-status">● Online · Collateral Underwriting Specialist · GPT-4o</div>
+            <div style={{ flex: 1 }}>
+              <div className="chat-name">CollateralIQ Copilot</div>
+              <div className="chat-status">● Online · Underwriting Specialist · v2.0</div>
             </div>
+            {lastValuation && (
+              <div className="chat-context-badge">
+                📋 Case: {lastValuation.address?.slice(0, 20) || lastValuation.subtype} · RI:{lastValuation.resaleIndex}
+              </div>
+            )}
           </div>
 
           <div className="chat-body" ref={bodyRef}>
-            {/* Welcome message */}
             <div className="msg ai">
               <div className="msg-bubble">
-                Hello! I'm your AI underwriting copilot, powered by GPT-4o.<br /><br />
-                I specialize in Indian property-backed lending — LAP, home loans, commercial mortgages. Ask me anything about collateral value, LTV, liquidity risk, or RBI guidelines.
+                Hello! I'm your <strong>CollateralIQ Copilot</strong> — AI underwriting assistant.<br /><br />
+                I can help with property valuation, risk analysis, credit memos, what-if scenarios, and RBI/NBFC compliance.<br /><br />
+                {lastValuation ? (
+                  <span style={{ color: 'var(--gold)' }}>📋 I have context from your last valuation ({lastValuation.address || lastValuation.subtype}). Ask me anything about it!</span>
+                ) : (
+                  <span style={{ color: 'var(--text3)' }}>Run a valuation first to give me case context, or ask general questions.</span>
+                )}
               </div>
               <div className="msg-time">Just now</div>
             </div>
@@ -124,7 +141,7 @@ export default function Copilot() {
             <textarea
               className="chat-input"
               rows={1}
-              placeholder="Ask about collateral value, LTV, risk flags…"
+              placeholder="Ask about collateral value, explain scores, generate memos…"
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}

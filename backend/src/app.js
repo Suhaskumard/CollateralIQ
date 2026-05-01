@@ -8,6 +8,7 @@ import whatifRoutes    from './modules/whatif/whatif.routes.js';
 import portfolioRoutes from './modules/portfolio/portfolio.routes.js';
 import copilotRoutes   from './modules/copilot/copilot.routes.js';
 import auditRoutes     from './modules/audit/audit.routes.js';
+import metadataRoutes  from './modules/metadata/metadata.routes.js';
 
 export function createApp() {
   const app = express();
@@ -23,10 +24,12 @@ export function createApp() {
   app.use('/api/portfolio', portfolioRoutes);
   app.use('/api/copilot',   copilotRoutes);
   app.use('/api/audit',     auditRoutes);
+  app.use('/api/metadata',  metadataRoutes);
+  app.use('/api/health',    metadataRoutes);
 
   // ── Health check ───────────────────────────────────────────────────────────
   app.get('/', (_req, res) =>
-    res.json({ status: 'ok', service: 'CollateralIQ API', version: '1.0.0' })
+    res.json({ status: 'ok', service: 'CollateralIQ API', version: '2.0.0' })
   );
 
   // ── Centralised error handler (must be last) ───────────────────────────────

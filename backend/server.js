@@ -4,7 +4,7 @@ import { PORT } from './src/config/index.js';
 
 const app = createApp();
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`\n🏦  CollateralIQ API  →  http://localhost:${PORT}`);
   console.log(`📋  Routes:`);
   console.log(`    GET    /api/dashboard/metrics`);
@@ -17,3 +17,13 @@ app.listen(PORT, () => {
   console.log(`    GET    /api/audit/trail`);
   console.log(`    POST   /api/audit/log\n`);
 });
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n⚠  Port ${PORT} is already in use.`);
+    console.error(`   Run: npx kill-port ${PORT}   then restart.\n`);
+    process.exit(1);
+  }
+  throw err;
+});
+

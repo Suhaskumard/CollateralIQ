@@ -12,14 +12,19 @@ export function toast(icon, msg) {
 }
 
 export function AppProvider({ children }) {
-  const [page, setPage]     = useState('dashboard');
-  const [toasts, setToasts] = useState([]);
+  const [page, setPage]               = useState('dashboard');
+  const [toasts, setToasts]           = useState([]);
+  const [lastValuation, setLastVal]   = useState(null);
   _setToasts = setToasts;
 
   const navigate = useCallback((p) => setPage(p), []);
 
+  const saveValuation = useCallback((data) => {
+    setLastVal(data);
+  }, []);
+
   return (
-    <AppContext.Provider value={{ page, navigate, toasts }}>
+    <AppContext.Provider value={{ page, navigate, toasts, lastValuation, saveValuation }}>
       {children}
     </AppContext.Provider>
   );

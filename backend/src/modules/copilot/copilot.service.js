@@ -3,42 +3,171 @@ import { OPENAI_API_KEY, OPENAI_MODEL } from '../../config/index.js';
 
 const client = new OpenAI({ apiKey: OPENAI_API_KEY });
 
-const SYSTEM_PROMPT = `You are ValuAI Copilot, an expert AI underwriting copilot for Indian NBFCs specializing in property-backed lending (LAP, home loans, commercial mortgages).
+const SYSTEM_PROMPT = `You are CollateralIQ Copilot, an expert AI underwriting copilot for Indian NBFCs specializing in property-backed lending (LAP, home loans, commercial mortgages).
 
-Your expertise:
-- Indian real estate markets (Bengaluru: Whitefield, Koramangala, HSR, Sarjapur, Indiranagar, Hebbal)
+## Your Expertise
+- Indian real estate markets — Bengaluru micro-markets (Whitefield, Koramangala, HSR, Sarjapur, Indiranagar, Hebbal, etc.)
 - Karnataka Dept of Stamps & Registration — circle rates / guidance values
-- NBFC lending norms, RBI LTV guidelines (75% for ≤₹30L, 80% for ₹30-75L, 75% for >₹75L residential; 55-65% commercial)
-- Valuation formula: Market Value = Guidance Value × Location × Property Adj × Condition × Marketability
-- Resale Index = 0.30×L + 0.20×F + 0.20×J + 0.10×A + 0.10×R + 0.10×M
-- Distress discounts: prime/clear title 10-18%, mid-market 15-25%, old/niche/legal issues 25-40%
-- Liquidation timelines: RI 80-100 → 30-60d, 60-79 → 45-90d, 40-59 → 90-180d, <40 → 180d+
-- Policy: desktop-approve (clean), field-review (moderate risk), legal-review (title/legal issues)
+- RBI LTV guidelines: Residential ≤₹30L → 75%, ₹30-75L → 80%, >₹75L → 75%; Commercial → 55-65%
 
-Be concise, expert, and use India-specific data. Under 300 words unless writing a formal credit memo.`;
+## Valuation Framework (v2.0)
+Market Value = Base Guidance Value × Location Multiplier × Property Adjustment × Condition/Age Adjustment × Marketability Adjustment
+- Layer 1: Rules-based floor/cap from guidance value × area
+- Layer 2: Multiplicative factor model on engineered features
+- Layer 3: Quantile bounds for lower/upper band estimation
+
+## Key Metrics
+- Resale Index (0-100): 30% micro-location + 20% fungibility + 20% legal + 10% age + 10% occupancy + 10% supply-demand
+- Distress Value = Market Value × (1 − Liquidity Discount); Discount bands: prime 10-18%, mid 15-25%, complex 25-40%
+- Time to Liquidate: RI 80-100 → 30-60d, 60-79 → 45-90d, 40-59 → 90-180d, <40 → 180d+
+- Confidence Score (0-100): 25% input + 25% data + 20% market + 20% agreement + 10% fraud
+- Policy: desktop-approve (clean), field-review (moderate), legal-review (title/legal issues)
+
+## User Intents You Handle
+1. Estimate collateral value for a property
+2. Explain why a score is low/high with driver analysis
+3. Identify missing data and its impact on confidence
+4. Run what-if scenarios (area correction, title clarity, market tier change)
+5. Generate credit memo summaries for underwriter attachment
+6. Answer RBI/NBFC compliance questions
+7. Compare micro-market risk profiles
+
+## Rules
+- Be concise, expert, and India-specific. Under 300 words unless writing a credit memo.
+- Never invent pricing data — always reference the valuation framework.
+- When asked for a valuation, use the framework formulas, not arbitrary numbers.
+- Flag uncertainty explicitly and recommend data collection when confidence is low.
+- For credit memos, use formal tone with bullet points.`;
 
 const MOCK_RESPONSES = {
-  ltv: `**LTV Guidelines (RBI Master Circular)**\n\n- Residential ≤₹30L → **75% LTV**\n- Residential ₹30-75L → **80% LTV**\n- Residential >₹75L → **75% LTV**\n- Commercial/LAP → **55-65% LTV**`,
-  distress: `**Distress Value Discounts**\n\n- Prime location, clear title → **10-18%**\n- Mid-market → **15-25%**\n- Old property / legal issues → **25-40%**\n\nDistress Value = Market Value × (1 − Discount%)`,
-  default: `I'm ValuAI Copilot — your collateral intelligence assistant.\n\nI can help with property valuation, LTV assessment, resale index analysis, distress value calculations, and RBI/NBFC compliance guidance.\n\n⚙️ *Add your \`OPENAI_API_KEY\` to \`backend/.env\` to unlock full GPT-4o responses.*`,
+  estimate: `**Valuation Estimate (CollateralIQ v2.0)**
+
+For a standard 2BHK apartment in Whitefield (~1250 sqft, 8 years old, freehold clear title):
+
+📊 **Market Value Band**: ₹89L – ₹107L (base ₹98L)
+📉 **Distress Value**: ₹80L – ₹92L (discount ~18%)
+🔄 **Resale Index**: 74/100 — Moderate Liquidity
+⏱️ **Time to Liquidate**: 45–90 days
+🛡️ **Confidence**: 78/100
+
+**Top Value Drivers:**
+✅ Standard apartment — high fungibility (90/100)
+✅ Mid-tier location with adequate demand (82/100)
+✅ Rental income supports marketability
+
+**Risk Factors:**
+⚠ Surplus supply in Whitefield micro-market
+⚠ 8-year depreciation applies (~6% reduction)
+
+**Policy**: Field Review recommended
+
+*Run a full valuation on the Estimate page for exact numbers.*`,
+
+  distress: `**Distress Value & Liquidity Discounts**
+
+Distress Value = Market Value × (1 − Liquidity Discount)
+
+**Discount Bands by Profile:**
+| Profile | Discount Range |
+|---------|---------------|
+| Prime apartment, clear title | 10–18% |
+| Mid-market apartment/shop | 15–25% |
+| Old building, niche, legal issues | 25–40% |
+
+**Discount Components:**
+- Asset type & subtype standardization
+- Micro-market demand depth
+- Legal clarity & title status
+- Building age & condition
+- Local supply-demand balance
+
+A high discount typically means: legal complications, niche property type, oversupplied micro-market, or aged building requiring renovation.`,
+
+  ltv: `**LTV Guidelines (RBI Master Circular)**
+
+**Residential:**
+- ≤₹30L → **75% LTV**
+- ₹30–75L → **80% LTV**
+- >₹75L → **75% LTV**
+
+**Commercial / LAP:**
+- ≤₹50L → **65% LTV**
+- >₹50L → **55% LTV**
+
+**Key Considerations:**
+- LTV is applied to the *distress value*, not market value
+- Legal-review cases may warrant additional 5-10% haircut
+- NBFC internal policies may be stricter than RBI minimums`,
+
+  memo: `**Credit Memo — Collateral Assessment Summary**
+
+**Property:** [Address from case data]
+**Type:** Residential Apartment | **Area:** 1,250 sqft | **Age:** 8 years
+
+**Valuation Summary:**
+• Market Value Band: ₹89L – ₹107L (Base: ₹98L at ₹7,800/sqft)
+• Distress/Forced Sale Value: ₹80L (18% liquidity discount applied)
+• Resale Potential Index: 74/100 — Moderate Liquidity
+• Estimated Liquidation: 45–90 days
+• Confidence Score: 78/100
+
+**Key Observations:**
+• Standard apartment configuration supports exit liquidity
+• Freehold clear title — no legal impediments identified
+• Rental income of ₹32,000/month validates occupancy demand
+• Mid-market micro-location with moderate supply depth
+
+**Risk Flags:** None critical
+
+**Recommendation:** FIELD REVIEW — Proceed with physical verification and standard due diligence.
+
+*Generated by CollateralIQ v2.0 | Model: hybrid-3-layer*`,
+
+  default: `I'm **CollateralIQ Copilot** — your AI underwriting assistant.
+
+I can help with:
+🏠 **Property valuation** — estimate market value bands with confidence scores
+📊 **Risk analysis** — resale index, distress value, liquidation timeline
+📋 **Credit memos** — generate underwriter-ready summaries
+🔄 **What-if scenarios** — simulate title changes, area corrections, market shifts
+📖 **Compliance** — RBI LTV norms, NBFC guidelines
+
+Try asking:
+• *"Estimate value for a 2BHK in Whitefield"*
+• *"Why is the distress discount high?"*
+• *"Generate a credit memo for this case"*
+• *"What changes if the property were freehold?"*
+
+⚙️ *Add your \`OPENAI_API_KEY\` to \`backend/.env\` for full GPT-4o responses.*`,
 };
 
 function getMockResponse(msg = '') {
   const l = msg.toLowerCase();
-  if (l.includes('ltv') || l.includes('loan')) return MOCK_RESPONSES.ltv;
-  if (l.includes('distress') || l.includes('discount')) return MOCK_RESPONSES.distress;
+  if (l.includes('estimate') || l.includes('value') || l.includes('2bhk') || l.includes('valuat'))
+    return MOCK_RESPONSES.estimate;
+  if (l.includes('distress') || l.includes('discount') || l.includes('why'))
+    return MOCK_RESPONSES.distress;
+  if (l.includes('ltv') || l.includes('loan') || l.includes('rbi') || l.includes('guideline'))
+    return MOCK_RESPONSES.ltv;
+  if (l.includes('memo') || l.includes('summary') || l.includes('bullet') || l.includes('generate'))
+    return MOCK_RESPONSES.memo;
   return MOCK_RESPONSES.default;
 }
 
 export async function chatCompletion(messages) {
   if (!OPENAI_API_KEY) return getMockResponse(messages.at(-1)?.content);
-  const res = await client.chat.completions.create({
-    model: OPENAI_MODEL,
-    messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
-    max_tokens: 1000,
-    temperature: 0.4,
-  });
-  return res.choices[0].message.content;
+  try {
+    const res = await client.chat.completions.create({
+      model: OPENAI_MODEL,
+      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
+      max_tokens: 1500,
+      temperature: 0.35,
+    });
+    return res.choices[0].message.content;
+  } catch (err) {
+    console.error(`[Copilot] API error, falling back to mock: ${err.message}`);
+    return getMockResponse(messages.at(-1)?.content);
+  }
 }
 
 export async function* chatStream(messages) {
@@ -46,19 +175,28 @@ export async function* chatStream(messages) {
     const mock = getMockResponse(messages.at(-1)?.content);
     for (const char of mock) {
       yield char;
-      await new Promise(r => setTimeout(r, 8));
+      await new Promise(r => setTimeout(r, 6));
     }
     return;
   }
-  const stream = await client.chat.completions.create({
-    model: OPENAI_MODEL,
-    messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
-    max_tokens: 1000,
-    temperature: 0.4,
-    stream: true,
-  });
-  for await (const chunk of stream) {
-    const text = chunk.choices[0]?.delta?.content || '';
-    if (text) yield text;
+  try {
+    const stream = await client.chat.completions.create({
+      model: OPENAI_MODEL,
+      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
+      max_tokens: 1500,
+      temperature: 0.35,
+      stream: true,
+    });
+    for await (const chunk of stream) {
+      const text = chunk.choices[0]?.delta?.content || '';
+      if (text) yield text;
+    }
+  } catch (err) {
+    console.error(`[Copilot] Stream error, falling back to mock: ${err.message}`);
+    const mock = getMockResponse(messages.at(-1)?.content);
+    for (const char of mock) {
+      yield char;
+      await new Promise(r => setTimeout(r, 6));
+    }
   }
 }
