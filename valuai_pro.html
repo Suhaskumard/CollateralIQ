@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ValuAI Pro — Collateral Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b10;
+  --surface: #0e1318;
+  --surface2: #141b22;
+  --surface3: #1a2330;
+  --border: #1f2d3d;
+  --border2: #253444;
+  --gold: #d4a843;
+  --gold2: #f0c866;
+  --gold-dim: rgba(212,168,67,0.12);
+  --teal: #0ea89e;
+  --teal-dim: rgba(14,168,158,0.12);
+  --red: #e05252;
+  --red-dim: rgba(224,82,82,0.12);
+  --green: #3cb878;
+  --green-dim: rgba(60,184,120,0.12);
+  --amber: #e09a30;
+  --amber-dim: rgba(224,154,48,0.12);
+  --text: #e8ecf0;
+  --text2: #8fa3b8;
+  --text3: #4d6070;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Playfair Display', serif;
+  --sans: 'Outfit', sans-serif;
+  --radius: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-gold: 0 0 40px rgba(212,168,67,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── LAYOUT ── */
+.app-shell { display: flex; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px; flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; bottom: 0;
+  z-index: 200;
+  transition: width 0.3s;
+}
+.sidebar-brand {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.brand-logo {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--gold);
+  display: flex; align-items: center; gap: 8px;
+}
+.brand-logo .logo-icon {
+  width: 32px; height: 32px;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.brand-tagline {
+  font-size: 10px;
+  color: var(--text3);
+  font-family: var(--mono);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.sidebar-nav { flex: 1; padding: 16px 10px; display: flex; flex-direction: column; gap: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  user-select: none;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--gold-dim); color: var(--gold); border-color: rgba(212,168,67,0.2); }
+.nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-section {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 14px 12px 6px;
+}
+.sidebar-bottom { padding: 16px; border-top: 1px solid var(--border); }
+.sidebar-user {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px;
+  border-radius: var(--radius);
+  background: var(--surface2);
+}
+.user-avatar {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--gold), var(--amber));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  color: var(--bg); flex-shrink: 0;
+}
+.user-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.user-role { font-size: 10px; color: var(--text3); font-family: var(--mono); }
+
+/* ── MAIN ── */
+.main-content { margin-left: 220px; flex: 1; min-height: 100vh; }
+
+/* ── TOP BAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  height: 56px;
+  background: rgba(8,11,16,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.page-breadcrumb { font-size: 13px; color: var(--text2); font-weight: 500; }
+.page-breadcrumb span { color: var(--gold); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-badge {
+  padding: 4px 10px;
+  background: var(--green-dim);
+  border: 1px solid rgba(60,184,120,0.3);
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--green);
+}
+.topbar-btn {
+  padding: 6px 14px;
+  background: var(--gold);
+  color: var(--bg);
+  border: none; border-radius: var(--radius);
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all 0.15s;
+}
+.topbar-btn:hover { background: var(--gold2); }
+
+/* ── PAGES ── */
+.page { display: none; animation: fadein 0.2s ease; }
+.page.active { display: block; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ── DASHBOARD ── */
+.dash-header {
+  padding: 36px 32px 0;
+}
+.dash-greeting {
+  font-size: 12px; font-family: var(--mono);
+  color: var(--text3); letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.dash-title {
+  font-family: var(--serif);
+  font-size: 36px; color: var(--text);
+  margin-bottom: 4px;
+}
+.dash-title em { color: var(--gold); font-style: italic; }
+.dash-sub { font-size: 14px; color: var(--text2); }
+.dash-kpis {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px; padding: 28px 32px 0;
+}
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: border-color 0.2s;
+  cursor: default;
+}
+.kpi-card:hover { border-color: var(--border2); }
+.kpi-label { font-size: 10px; font-family: var(--mono); letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.kpi-value { font-family: var(--serif); font-size: 30px; color: var(--text); }
+.kpi-delta { font-size: 11px; margin-top: 4px; font-family: var(--mono); }
+.kpi-delta.up { color: var(--green); }
+.kpi-delta.down { color: var(--red); }
+.kpi-delta.neutral { color: var(--text3); }
+.kpi-icon { float: right; font-size: 22px; margin-top: -2px; }
+
+.dash-grid { display: grid; grid-template-columns: 1fr 360px; gap: 20px; padding: 20px 32px; }
+.dash-grid-wide { padding: 0 32px 32px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.card-action { font-size: 11px; color: var(--teal); cursor: pointer; font-family: var(--mono); }
+.card-body { padding: 20px; }
+
+/* ── CHART BARS ── */
+.chart-bars { display: flex; align-items: flex-end; gap: 4px; height: 120px; }
+.chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.chart-bar {
+  width: 100%; border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, var(--gold), var(--amber));
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  min-height: 4px;
+}
+.chart-bar:hover { opacity: 1; }
+.chart-bar.teal { background: linear-gradient(180deg, var(--teal), #0a7a72); }
+.chart-label { font-size: 9px; font-family: var(--mono); color: var(--text3); }
+
+/* ── TABLE ── */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  padding: 10px 16px;
+  font-size: 10px; font-family: var(--mono);
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--text3);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.data-table td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--surface2); color: var(--text); }
+.data-table .mono { font-family: var(--mono); font-size: 12px; }
+.data-table .gold { color: var(--gold); font-weight: 600; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px; font-family: var(--mono);
+  font-weight: 600;
+}
+.badge-green { background: var(--green-dim); color: var(--green); }
+.badge-amber { background: var(--amber-dim); color: var(--amber); }
+.badge-red { background: var(--red-dim); color: var(--red); }
+.badge-teal { background: var(--teal-dim); color: var(--teal); }
+.badge-gold { background: var(--gold-dim); color: var(--gold); }
+
+/* ── RISK METER ── */
+.risk-meter { display: flex; gap: 3px; margin-top: 6px; }
+.risk-seg { height: 6px; flex: 1; border-radius: 2px; }
+
+/* ── ESTIMATE FORM ── */
+.estimate-wrap { padding: 32px; }
+.estimate-grid { display: grid; grid-template-columns: 420px 1fr; gap: 28px; align-items: start; }
+
+.form-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.form-panel-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.form-panel-title {
+  font-family: var(--serif);
+  font-size: 20px; color: var(--text);
+}
+.form-panel-sub { font-size: 12px; color: var(--text3); margin-top: 3px; }
+.form-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+
+.frow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg label {
+  font-size: 10px; font-family: var(--mono);
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text3);
+}
+.fg input, .fg select, .fg textarea {
+  padding: 9px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 13px;
+  font-family: var(--sans);
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--gold); }
+.fg select option { background: var(--surface2); }
+.section-divider {
+  font-size: 9px; font-family: var(--mono);
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--text3);
+  display: flex; align-items: center; gap: 10px;
+  padding: 4px 0;
+}
+.section-divider::after { content:''; flex:1; height:1px; background: var(--border); }
+
+.btn-analyze {
+  width: 100%;
+  padding: 13px;
+  background: var(--gold);
+  color: var(--bg);
+  border: none; border-radius: var(--radius);
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: var(--sans);
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-top: 4px;
+}
+.btn-analyze:hover { background: var(--gold2); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(212,168,67,0.3); }
+.btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.2); border-top-color: var(--bg); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── RESULTS ── */
+.results-stack { display: flex; flex-direction: column; gap: 14px; }
+.placeholder-state {
+  height: 400px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.placeholder-state .ph-icon { font-size: 48px; opacity: 0.4; }
+.placeholder-state .ph-title { font-family: var(--serif); font-size: 22px; color: var(--text2); }
+.placeholder-state .ph-sub { font-size: 13px; color: var(--text3); max-width: 260px; }
+
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.r-card.highlight-gold { border-color: rgba(212,168,67,0.4); background: rgba(212,168,67,0.04); }
+.r-card.highlight-teal { border-color: rgba(14,168,158,0.3); background: rgba(14,168,158,0.04); }
+.r-tag { font-size: 9px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 2px; color: var(--text3); margin-bottom: 8px; }
+.r-val { font-family: var(--serif); font-size: 28px; color: var(--text); }
+.r-val.sm { font-size: 20px; }
+.r-sub { font-size: 12px; color: var(--text3); margin-top: 3px; }
+.r-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.r-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+
+.progress-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 10px; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+.progress-fill.gold { background: linear-gradient(90deg, var(--amber), var(--gold)); }
+.progress-fill.teal { background: linear-gradient(90deg, var(--teal), #0dd4c8); }
+.progress-fill.red { background: linear-gradient(90deg, var(--red), #ff7070); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip {
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 500;
+}
+.chip-green { background: var(--green-dim); color: var(--green); }
+.chip-red { background: var(--red-dim); color: var(--red); }
+.chip-gold { background: var(--gold-dim); color: var(--gold); }
+
+.policy-pill {
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 12px; font-weight: 700;
+  font-family: var(--mono);
+}
+.policy-desktop { background: var(--green-dim); color: var(--green); border: 1px solid rgba(60,184,120,0.3); }
+.policy-field { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(224,154,48,0.3); }
+.policy-legal { background: var(--red-dim); color: var(--red); border: 1px solid rgba(224,82,82,0.3); }
+
+/* ── WHAT-IF ── */
+.whatif-wrap { padding: 32px; }
+.whatif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.scenario-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.scenario-header { padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--surface2); }
+.scenario-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.scenario-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.comp-cell { padding: 14px 16px; background: var(--surface2); }
+.comp-cell.base { background: var(--surface3); }
+.comp-label { font-size: 9px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 1px; color: var(--text3); }
+.comp-val { font-family: var(--serif); font-size: 18px; color: var(--text); margin-top: 3px; }
+.comp-val.better { color: var(--green); }
+.comp-val.worse { color: var(--red); }
+.delta-badge { font-size: 10px; font-family: var(--mono); margin-top: 2px; }
+
+.slider-group { display: flex; flex-direction: column; gap: 6px; }
+.slider-group label { font-size: 11px; font-family: var(--mono); color: var(--text2); display: flex; justify-content: space-between; }
+.slider-group input[type=range] {
+  width: 100%; height: 4px;
+  background: var(--border2);
+  border-radius: 2px; outline: none;
+  -webkit-appearance: none; cursor: pointer;
+}
+.slider-group input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background: var(--gold); border-radius: 50%;
+}
+
+/* ── CHATBOT ── */
+.chat-wrap { padding: 32px; display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+.chat-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex; flex-direction: column;
+  height: 680px;
+}
+.chat-topbar {
+  padding: 16px 20px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.chat-av {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--gold), var(--amber));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.chat-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.chat-status { font-size: 11px; font-family: var(--mono); color: var(--teal); }
+.chat-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.msg { max-width: 82%; display: flex; flex-direction: column; gap: 3px; }
+.msg.user { align-self: flex-end; }
+.msg.ai { align-self: flex-start; }
+.msg-bubble {
+  padding: 11px 15px;
+  border-radius: 12px;
+  font-size: 13px; line-height: 1.65;
+}
+.msg.user .msg-bubble { background: var(--gold); color: var(--bg); border-bottom-right-radius: 3px; font-weight: 500; }
+.msg.ai .msg-bubble { background: var(--surface2); border: 1px solid var(--border); border-bottom-left-radius: 3px; color: var(--text); }
+.msg-time { font-size: 10px; font-family: var(--mono); color: var(--text3); }
+.msg.user .msg-time { text-align: right; }
+.chat-input-row {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 10px; align-items: flex-end;
+}
+.chat-textarea {
+  flex: 1; padding: 9px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 13px; font-family: var(--sans);
+  resize: none; outline: none;
+  max-height: 80px;
+}
+.chat-textarea:focus { border-color: var(--gold); }
+.chat-send-btn {
+  padding: 9px 16px;
+  background: var(--gold);
+  color: var(--bg);
+  border: none; border-radius: var(--radius);
+  font-size: 16px; cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.chat-send-btn:hover { background: var(--gold2); }
+.chat-send-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+.quick-panel { display: flex; flex-direction: column; gap: 10px; }
+.qp-label { font-size: 9px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 2px; color: var(--text3); margin-bottom: 4px; }
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 12px; line-height: 1.5;
+  color: var(--text2);
+}
+.q-card:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.q-card-cat { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 4px; }
+
+.dots span {
+  display: inline-block; width: 6px; height: 6px;
+  background: var(--text3); border-radius: 50%; margin: 0 2px;
+  animation: dot 1.2s infinite;
+}
+.dots span:nth-child(2) { animation-delay: 0.2s; }
+.dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot { 0%,80%,100%{opacity:0.2;transform:scale(0.8)} 40%{opacity:1;transform:scale(1)} }
+
+/* ── AUDIT PAGE ── */
+.audit-wrap { padding: 32px; }
+.audit-filters { display: flex; gap: 10px; margin-bottom: 20px; }
+.audit-filter-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px; font-family: var(--mono);
+  cursor: pointer; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text2);
+  transition: all 0.15s;
+}
+.audit-filter-btn.active { background: var(--gold-dim); color: var(--gold); border-color: rgba(212,168,67,0.3); }
+
+/* ── HOW IT WORKS ── */
+.how-wrap { padding: 32px; }
+.arch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+.arch-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.arch-card::before {
+  content: attr(data-num);
+  position: absolute; top: 16px; right: 16px;
+  font-family: var(--serif); font-size: 52px;
+  color: var(--border); line-height: 1;
+}
+.arch-icon { font-size: 28px; margin-bottom: 12px; }
+.arch-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.arch-desc { font-size: 12px; color: var(--text3); line-height: 1.7; }
+
+.formula-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  font-family: var(--mono);
+  font-size: 13px; line-height: 2.2;
+  color: var(--text2);
+  margin-bottom: 24px;
+}
+.formula-block .f-head { color: var(--text); font-weight: 600; }
+.formula-block .f-term { color: var(--gold); }
+.formula-block .f-note { font-size: 10px; color: var(--text3); }
+
+.weight-table { width: 100%; }
+.weight-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.weight-row:last-child { border-bottom: none; }
+.weight-name { font-size: 12px; color: var(--text2); width: 220px; flex-shrink: 0; }
+.weight-bar-wrap { flex: 1; }
+.weight-pct { font-family: var(--mono); font-size: 12px; color: var(--gold); width: 36px; text-align: right; flex-shrink: 0; }
+
+/* ── FOOTER ── */
+footer {
+  padding: 20px 32px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; font-family: var(--mono);
+  color: var(--text3);
+  display: flex; justify-content: space-between; align-items: center;
+}
+footer span { color: var(--gold); }
+
+/* ── NOTIFICATION TOAST ── */
+.toast-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 12px; color: var(--text);
+  display: flex; align-items: center; gap: 10px;
+  min-width: 240px;
+  animation: slideup 0.3s ease;
+  box-shadow: var(--shadow);
+}
+@keyframes slideup { from { transform: translateY(20px); opacity: 0; } }
+.toast .t-icon { font-size: 16px; }
+
+/* ── MISC ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.tag {
+  display: inline-block; padding: 1px 8px;
+  border-radius: 4px; font-size: 10px; font-family: var(--mono);
+}
+.tag-teal { background: var(--teal-dim); color: var(--teal); }
+.tag-gold { background: var(--gold-dim); color: var(--gold); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .sidebar { width: 56px; }
+  .sidebar-brand .brand-logo span:last-child, .nav-item span.nav-text, .brand-tagline, .sidebar-user .user-name, .sidebar-user .user-role, .nav-section { display: none; }
+  .main-content { margin-left: 56px; }
+  .estimate-grid, .whatif-grid, .chat-wrap, .dash-kpis { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <div class="logo-icon">⬡</div>
+      <span>ValuAI</span>
+    </div>
+    <div class="brand-tagline">Pro · v2.0</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
+      <span class="nav-icon">▦</span><span class="nav-text">Dashboard</span>
+    </div>
+
+    <div class="nav-section">Analysis</div>
+    <div class="nav-item" id="nav-estimate" onclick="showPage('estimate')">
+      <span class="nav-icon">◈</span><span class="nav-text">New Estimate</span>
+    </div>
+    <div class="nav-item" id="nav-whatif" onclick="showPage('whatif')">
+      <span class="nav-icon">⟳</span><span class="nav-text">What-If Simulator</span>
+    </div>
+    <div class="nav-item" id="nav-portfolio" onclick="showPage('portfolio')">
+      <span class="nav-icon">≡</span><span class="nav-text">Portfolio View</span>
+    </div>
+
+    <div class="nav-section">Intelligence</div>
+    <div class="nav-item" id="nav-copilot" onclick="showPage('copilot')">
+      <span class="nav-icon">✦</span><span class="nav-text">AI Copilot</span>
+    </div>
+    <div class="nav-item" id="nav-audit" onclick="showPage('audit')">
+      <span class="nav-icon">◉</span><span class="nav-text">Audit Trail</span>
+    </div>
+
+    <div class="nav-section">Reference</div>
+    <div class="nav-item" id="nav-how" onclick="showPage('how')">
+      <span class="nav-icon">⊛</span><span class="nav-text">Methodology</span>
+    </div>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="sidebar-user">
+      <div class="user-avatar">KM</div>
+      <div>
+        <div class="user-name">Kiran Mehta</div>
+        <div class="user-role">Credit Manager · NBFC</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main-content">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-breadcrumb" id="breadcrumb"><span>Dashboard</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-badge">● Model v2.1.4 · Live</div>
+      <button class="topbar-btn" onclick="showPage('estimate')">+ New Case</button>
+    </div>
+  </div>
+
+  <!-- ════════ DASHBOARD PAGE ════════ -->
+  <div id="page-dashboard" class="page active">
+    <div class="dash-header">
+      <div class="dash-greeting">Good Morning</div>
+      <div class="dash-title">Collateral <em>Intelligence</em> Overview</div>
+      <div class="dash-sub">May 2026 · Bengaluru Region · NBFCPro Portfolio</div>
+    </div>
+
+    <div class="dash-kpis">
+      <div class="kpi-card">
+        <div class="kpi-icon">◈</div>
+        <div class="kpi-label">Cases This Month</div>
+        <div class="kpi-value">247</div>
+        <div class="kpi-delta up">↑ 18% vs last month</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">₹</div>
+        <div class="kpi-label">Collateral Value Under Review</div>
+        <div class="kpi-value">₹842Cr</div>
+        <div class="kpi-delta up">↑ 24% YoY</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">⚡</div>
+        <div class="kpi-label">Avg Resale Index</div>
+        <div class="kpi-value">68.4</div>
+        <div class="kpi-delta down">↓ 2.1 pts vs last month</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">✓</div>
+        <div class="kpi-label">Desktop Approved</div>
+        <div class="kpi-value">71%</div>
+        <div class="kpi-delta neutral">→ Stable</div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <!-- Volume chart -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Monthly Case Volume & Avg Market Value</div>
+          <div class="card-action">View All →</div>
+        </div>
+        <div class="card-body">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);">
+              <div style="width:10px;height:10px;background:var(--gold);border-radius:2px;"></div> Cases
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);">
+              <div style="width:10px;height:10px;background:var(--teal);border-radius:2px;"></div> Avg ₹ (Lakhs)
+            </div>
+          </div>
+          <div class="chart-bars">
+            <div class="chart-bar-wrap"><div class="chart-bar" style="height:48%"></div><div class="chart-label">Dec</div></div>
+            <div class="chart-bar-wrap"><div class="chart-bar" style="height:55%"></div><div class="chart-label">Jan</div></div>
+            <div class="chart-bar-wrap"><div class="chart-bar" style="height:62%"></div><div class="chart-label">Feb</div></div>
+            <div class="chart-bar-wrap"><div class="chart-bar" style="height:70%"></div><div class="chart-label">Mar</div></div>
+            <div class="chart-bar-wrap"><div class="chart-bar" style="height:78%"></div><div class="chart-label">Apr</div></div>
+            <div class="chart-bar-wrap"><div class="chart-bar" style="height:90%"></div><div class="chart-label">May</div></div>
+            <div style="width:16px"></div>
+            <div class="chart-bar-wrap"><div class="chart-bar teal" style="height:52%"></div><div class="chart-label">Dec</div></div>
+            <div class="chart-bar-wrap"><div class="chart-bar teal" style="height:60%"></div><div class="chart-label">Jan</div></div>
+            <div class="chart-bar-wrap"><div class="chart-bar teal" style="height:58%"></div><div class="chart-label">Feb</div></div>
+            <div class="chart-bar-wrap"><div class="chart-bar teal" style="height:65%"></div><div class="chart-label">Mar</div></div>
+            <div class="chart-bar-wrap"><div class="chart-bar teal" style="height:72%"></div><div class="chart-label">Apr</div></div>
+            <div class="chart-bar-wrap"><div class="chart-bar teal" style="height:80%"></div><div class="chart-label">May</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Recent Cases</div>
+          <div class="card-action" onclick="showPage('portfolio')">All Cases →</div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Property</th><th>Index</th><th>Status</th></tr>
+          </thead>
+          <tbody id="recent-cases-tbody">
+            <tr><td><div class="mono">Whitefield 2BHK</div></td><td><span class="gold">72</span></td><td><span class="badge badge-green">DESKTOP</span></td></tr>
+            <tr><td><div class="mono">Koramangala 3BHK</div></td><td><span class="gold">81</span></td><td><span class="badge badge-green">DESKTOP</span></td></tr>
+            <tr><td><div class="mono">Sarjapur Villa</div></td><td><span class="gold">44</span></td><td><span class="badge badge-amber">FIELD</span></td></tr>
+            <tr><td><div class="mono">HSR Shop</div></td><td><span class="gold">58</span></td><td><span class="badge badge-amber">FIELD</span></td></tr>
+            <tr><td><div class="mono">Hebbal Plot</div></td><td><span class="gold">36</span></td><td><span class="badge badge-red">LEGAL</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Policy distribution -->
+    <div class="dash-grid-wide" style="padding-top:0">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Policy Recommendation Distribution</div>
+        </div>
+        <div class="card-body" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+          <div style="text-align:center;padding:16px">
+            <div style="font-family:var(--serif);font-size:40px;color:var(--green)">71%</div>
+            <div style="font-size:11px;font-family:var(--mono);color:var(--text3);margin-top:4px">DESKTOP APPROVE</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:6px">175 cases · Fast-tracked</div>
+          </div>
+          <div style="text-align:center;padding:16px;border-left:1px solid var(--border);border-right:1px solid var(--border)">
+            <div style="font-family:var(--serif);font-size:40px;color:var(--amber)">21%</div>
+            <div style="font-size:11px;font-family:var(--mono);color:var(--text3);margin-top:4px">FIELD REVIEW</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:6px">52 cases · On-site needed</div>
+          </div>
+          <div style="text-align:center;padding:16px">
+            <div style="font-family:var(--serif);font-size:40px;color:var(--red)">8%</div>
+            <div style="font-size:11px;font-family:var(--mono);color:var(--text3);margin-top:4px">LEGAL REVIEW</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:6px">20 cases · Title/legal risk</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ ESTIMATE PAGE ════════ -->
+  <div id="page-estimate" class="page">
+    <div class="estimate-wrap">
+      <div class="estimate-grid">
+
+        <!-- FORM -->
+        <div class="form-panel">
+          <div class="form-panel-header">
+            <div class="form-panel-title">Property Assessment</div>
+            <div class="form-panel-sub">Enter property details to generate AI-powered valuation</div>
+          </div>
+          <div class="form-body">
+
+            <div class="fg">
+              <label>Property Address / Locality</label>
+              <input type="text" id="f-address" placeholder="e.g. Whitefield, Bengaluru, Karnataka" value="Whitefield, Bengaluru">
+            </div>
+
+            <div class="frow">
+              <div class="fg">
+                <label>Property Type</label>
+                <select id="f-type">
+                  <option value="residential">Residential</option>
+                  <option value="commercial">Commercial</option>
+                  <option value="industrial">Industrial</option>
+                  <option value="mixed">Mixed-use</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Sub-type</label>
+                <select id="f-subtype">
+                  <option value="apartment">Apartment / Flat</option>
+                  <option value="villa">Villa / Row House</option>
+                  <option value="plot">Plot / Land</option>
+                  <option value="office">Office Space</option>
+                  <option value="retail_shop">Retail Shop</option>
+                  <option value="warehouse">Warehouse</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="frow">
+              <div class="fg">
+                <label>Area (sq ft)</label>
+                <input type="number" id="f-area" placeholder="e.g. 1250" value="1250">
+              </div>
+              <div class="fg">
+                <label>Building Age (years)</label>
+                <input type="number" id="f-age" placeholder="e.g. 8" value="8">
+              </div>
+            </div>
+
+            <div class="frow">
+              <div class="fg">
+                <label>Floor Level</label>
+                <input type="number" id="f-floor" placeholder="e.g. 5" value="5">
+              </div>
+              <div class="fg">
+                <label>Lift Available</label>
+                <select id="f-lift">
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section-divider">Optional Inputs</div>
+
+            <div class="frow">
+              <div class="fg">
+                <label>Occupancy</label>
+                <select id="f-occupancy">
+                  <option value="rented">Rented</option>
+                  <option value="self-occupied">Self-occupied</option>
+                  <option value="vacant">Vacant</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Monthly Rent (₹)</label>
+                <input type="number" id="f-rent" placeholder="e.g. 32000" value="32000">
+              </div>
+            </div>
+
+            <div class="fg">
+              <label>Legal / Title Status</label>
+              <select id="f-legal">
+                <option value="freehold_clear_title">Freehold – Clear Title</option>
+                <option value="freehold_disputed">Freehold – Title Disputed</option>
+                <option value="leasehold">Leasehold</option>
+                <option value="encumbered">Encumbered / Mortgaged</option>
+                <option value="government_allotted">Government Allotted</option>
+              </select>
+            </div>
+
+            <div class="fg">
+              <label>Additional Notes (optional)</label>
+              <textarea id="f-notes" rows="2" placeholder="Road width, special amenities, nearby developments…"></textarea>
+            </div>
+
+            <button class="btn-analyze" id="btn-analyze" onclick="runEstimate()">
+              <div class="spinner" id="spin1"></div>
+              <span id="btn-analyze-text">⬡ Run AI Valuation</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="results-area">
+          <div class="placeholder-state" id="results-placeholder">
+            <div class="ph-icon">◈</div>
+            <div class="ph-title">Awaiting Analysis</div>
+            <div class="ph-sub">Fill in property details and click "Run AI Valuation" to generate a comprehensive collateral assessment.</div>
+          </div>
+          <div class="results-stack" id="results-panel" style="display:none"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ WHAT-IF SIMULATOR ════════ -->
+  <div id="page-whatif" class="page">
+    <div class="whatif-wrap">
+      <div style="margin-bottom:24px">
+        <div style="font-size:11px;font-family:var(--mono);letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Scenario Analysis</div>
+        <div style="font-family:var(--serif);font-size:28px;color:var(--text)">What-If Simulator</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:4px">Adjust parameters and see how collateral metrics change in real time</div>
+      </div>
+
+      <div class="whatif-grid">
+        <div class="scenario-card">
+          <div class="scenario-header">
+            <div class="scenario-title">⚙ Parameter Controls</div>
+          </div>
+          <div class="scenario-body">
+            <div class="slider-group">
+              <label>Property Age (years) <span id="sv-age">8</span></label>
+              <input type="range" id="sl-age" min="1" max="40" value="8" oninput="document.getElementById('sv-age').textContent=this.value;runWhatIf()">
+            </div>
+            <div class="slider-group">
+              <label>Area (sq ft) <span id="sv-area">1250</span></label>
+              <input type="range" id="sl-area" min="300" max="5000" step="50" value="1250" oninput="document.getElementById('sv-area').textContent=this.value;runWhatIf()">
+            </div>
+            <div class="slider-group">
+              <label>Monthly Rent (₹) <span id="sv-rent">32,000</span></label>
+              <input type="range" id="sl-rent" min="0" max="150000" step="1000" value="32000" oninput="document.getElementById('sv-rent').textContent=Number(this.value).toLocaleString();runWhatIf()">
+            </div>
+            <div class="slider-group">
+              <label>Floor Level <span id="sv-floor">5</span></label>
+              <input type="range" id="sl-floor" min="0" max="30" value="5" oninput="document.getElementById('sv-floor').textContent=this.value;runWhatIf()">
+            </div>
+            <div class="fg">
+              <label>Legal Status</label>
+              <select id="sl-legal" onchange="runWhatIf()">
+                <option value="freehold_clear">Freehold – Clear Title</option>
+                <option value="freehold_disputed">Freehold – Disputed</option>
+                <option value="leasehold">Leasehold</option>
+                <option value="encumbered">Encumbered</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Micro-market</label>
+              <select id="sl-market" onchange="runWhatIf()">
+                <option value="prime">Prime (Koramangala, Indiranagar)</option>
+                <option value="mid" selected>Mid-market (Whitefield, HSR)</option>
+                <option value="peripheral">Peripheral (Sarjapur, Hennur)</option>
+                <option value="distressed">Distressed / Oversupplied</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="scenario-header">
+            <div class="scenario-title">📊 Live Scenario Output</div>
+          </div>
+          <div class="scenario-body">
+            <div id="whatif-output">
+              <div class="comparison-grid">
+                <div class="comp-cell base">
+                  <div class="comp-label">Market Value (Base)</div>
+                  <div class="comp-val" id="wi-mv-base">₹95L – ₹115L</div>
+                </div>
+                <div class="comp-cell">
+                  <div class="comp-label">Market Value (Adjusted)</div>
+                  <div class="comp-val better" id="wi-mv-adj">₹95L – ₹115L</div>
+                </div>
+                <div class="comp-cell base">
+                  <div class="comp-label">Resale Index (Base)</div>
+                  <div class="comp-val" id="wi-ri-base">72</div>
+                </div>
+                <div class="comp-cell">
+                  <div class="comp-label">Resale Index (Adjusted)</div>
+                  <div class="comp-val" id="wi-ri-adj">72</div>
+                  <div class="delta-badge" id="wi-ri-delta"></div>
+                </div>
+                <div class="comp-cell base">
+                  <div class="comp-label">Liquidity Discount (Base)</div>
+                  <div class="comp-val" id="wi-ld-base">19%</div>
+                </div>
+                <div class="comp-cell">
+                  <div class="comp-label">Liquidity Discount (Adj.)</div>
+                  <div class="comp-val" id="wi-ld-adj">19%</div>
+                </div>
+                <div class="comp-cell base">
+                  <div class="comp-label">Time to Sell (Base)</div>
+                  <div class="comp-val" id="wi-ts-base">45–90 days</div>
+                </div>
+                <div class="comp-cell">
+                  <div class="comp-label">Time to Sell (Adj.)</div>
+                  <div class="comp-val" id="wi-ts-adj">45–90 days</div>
+                </div>
+              </div>
+
+              <div class="r-card mt-12" id="wi-policy-card">
+                <div class="r-tag">Policy Recommendation</div>
+                <div id="wi-policy-pill"></div>
+                <div style="font-size:12px;color:var(--text3);margin-top:8px" id="wi-insight">Adjust sliders to see scenario impact on collateral metrics.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ PORTFOLIO VIEW ════════ -->
+  <div id="page-portfolio" class="page">
+    <div class="audit-wrap">
+      <div style="margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <div style="font-size:11px;font-family:var(--mono);letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Collateral Book</div>
+          <div style="font-family:var(--serif);font-size:28px;color:var(--text)">Portfolio View</div>
+        </div>
+        <button class="topbar-btn" onclick="showPage('estimate')">+ Add Case</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">All Cases — Live + History</div>
+          <div class="card-action" id="portfolio-count">Loading…</div>
+        </div>
+        <table class="data-table" id="portfolio-table">
+          <thead>
+            <tr>
+              <th>Case ID</th>
+              <th>Address</th>
+              <th>Type</th>
+              <th>Area</th>
+              <th>Market Value</th>
+              <th>Resale Index</th>
+              <th>Confidence</th>
+              <th>Policy</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="portfolio-tbody">
+            <tr><td colspan="9" style="text-align:center;color:var(--text3);padding:40px">No cases yet. Run your first estimate →</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ AI COPILOT ════════ -->
+  <div id="page-copilot" class="page">
+    <div class="chat-wrap">
+      <div class="chat-box">
+        <div class="chat-topbar">
+          <div class="chat-av">⬡</div>
+          <div>
+            <div class="chat-name">ValuAI Copilot</div>
+            <div class="chat-status">● Online · Collateral Underwriting Specialist</div>
+          </div>
+        </div>
+        <div class="chat-body" id="chat-messages">
+          <div class="msg ai">
+            <div class="msg-bubble">
+              Hello! I'm your AI underwriting copilot, powered by Claude.<br><br>
+              I specialize in Indian property-backed lending — LAP, home loans, commercial mortgages. I can help you:<br>
+              • Assess collateral value & liquidity for any property<br>
+              • Explain distress discounts, risk flags, and confidence drivers<br>
+              • Simulate what-if scenarios (legal dispute, floor change, etc.)<br>
+              • Generate credit memo summaries for underwriters<br>
+              • Advise on LTV policy and RBI guidelines<br><br>
+              Try a quick prompt on the right, or just ask me anything →
+            </div>
+            <div class="msg-time">Just now</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <textarea class="chat-textarea" id="chat-input" rows="1" placeholder="Ask about a property, distress value, LTV policy…" onkeydown="handleChatKey(event)"></textarea>
+          <button class="chat-send-btn" id="btn-send" onclick="sendChat()">↑</button>
+        </div>
+      </div>
+
+      <div class="quick-panel">
+        <div class="qp-label">Quick Prompts</div>
+        <div class="q-card" onclick="setAndSend('Estimate value and resale risk for a 2BHK in Whitefield, Bengaluru — 1250 sq ft, 8 years old, rented at ₹32,000/month, freehold clear title.')">
+          <div class="q-card-cat">Valuation</div>
+          Estimate for 2BHK Whitefield, 1250 sqft, 8yr old, rented ₹32k/mo
+        </div>
+        <div class="q-card" onclick="setAndSend('Why would a prime apartment in Koramangala still have a high distress discount? What are the main risk factors?')">
+          <div class="q-card-cat">Risk Analysis</div>
+          What drives high distress discounts in prime locations?
+        </div>
+        <div class="q-card" onclick="setAndSend('What would change in a property valuation if the title had a legal dispute vs clear freehold? How does it affect LTV?')">
+          <div class="q-card-cat">What-If</div>
+          Impact of title dispute on valuation and LTV
+        </div>
+        <div class="q-card" onclick="setAndSend('Generate a 5-point underwriter credit memo summary for a mid-market apartment in Whitefield with resale index 72, confidence 0.68, market value ₹1.05 crore, and policy recommendation desktop-approve.')">
+          <div class="q-card-cat">Credit Memo</div>
+          Generate 5-point underwriter memo for resale index 72
+        </div>
+        <div class="q-card" onclick="setAndSend('What LTV ratio would you recommend for a property with resale index 55 and confidence score 0.60 in a peripheral micro-market? Refer to RBI guidelines.')">
+          <div class="q-card-cat">LTV Policy</div>
+          Recommended LTV for resale index 55, confidence 0.60
+        </div>
+        <div class="q-card" onclick="setAndSend('What are the key differences in collateral quality between a freehold apartment in Indiranagar vs a leasehold commercial shop in Hebbal? Which is stronger collateral for a LAP?')">
+          <div class="q-card-cat">Comparison</div>
+          Freehold apartment vs leasehold commercial: which is better LAP collateral?
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ AUDIT TRAIL ════════ -->
+  <div id="page-audit" class="page">
+    <div class="audit-wrap">
+      <div style="margin-bottom:24px">
+        <div style="font-size:11px;font-family:var(--mono);letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Governance</div>
+        <div style="font-family:var(--serif);font-size:28px;color:var(--text)">Audit Trail</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:4px">All estimates, overrides, and model version stamps</div>
+      </div>
+      <div class="audit-filters">
+        <div class="audit-filter-btn active">All Events</div>
+        <div class="audit-filter-btn">Estimates</div>
+        <div class="audit-filter-btn">Overrides</div>
+        <div class="audit-filter-btn">Policy Changes</div>
+      </div>
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr><th>Timestamp</th><th>Event</th><th>Case</th><th>User</th><th>Model</th><th>Output Hash</th></tr>
+          </thead>
+          <tbody id="audit-tbody">
+            <tr><td colspan="6" style="text-align:center;color:var(--text3);padding:40px">No audit entries yet. Estimates will appear here automatically.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ METHODOLOGY ════════ -->
+  <div id="page-how" class="page">
+    <div class="how-wrap">
+      <div style="margin-bottom:28px">
+        <div style="font-size:11px;font-family:var(--mono);letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Architecture</div>
+        <div style="font-family:var(--serif);font-size:32px;color:var(--text)">How ValuAI Works</div>
+      </div>
+
+      <div class="arch-grid">
+        <div class="arch-card" data-num="01">
+          <div class="arch-icon">📍</div>
+          <div class="arch-title">Input & Geocoding</div>
+          <div class="arch-desc">Address, property type, size, age entered by user. System geocodes to micro-market, validates inputs, runs fraud/anomaly checks.</div>
+        </div>
+        <div class="arch-card" data-num="02">
+          <div class="arch-icon">🗄</div>
+          <div class="arch-title">Data Acquisition</div>
+          <div class="arch-desc">Karnataka guidance values, OpenStreetMap amenity layers, listing density proxies, transport datasets (BMTC/metro), neighbourhood typology.</div>
+        </div>
+        <div class="arch-card" data-num="03">
+          <div class="arch-icon">⚙</div>
+          <div class="arch-title">Feature Engineering</div>
+          <div class="arch-desc">Location intelligence, property characteristics, legal attributes, income signals, and anomaly flags computed into rich feature set.</div>
+        </div>
+        <div class="arch-card" data-num="04">
+          <div class="arch-icon">🧠</div>
+          <div class="arch-title">Dual-Engine Scoring</div>
+          <div class="arch-desc">Valuation engine computes market & distress value bands. Liquidity engine produces resale index, liquidation timeline, confidence score.</div>
+        </div>
+        <div class="arch-card" data-num="05">
+          <div class="arch-icon">✦</div>
+          <div class="arch-title">Explainability Layer</div>
+          <div class="arch-desc">Driver ranking, risk flag decomposition, confidence reasoning, and policy recommendation surfaced as underwriter-readable outputs.</div>
+        </div>
+        <div class="arch-card" data-num="06">
+          <div class="arch-icon">🛡</div>
+          <div class="arch-title">Governance & Audit</div>
+          <div class="arch-desc">Immutable audit logs, model versioning, human override flags, human review thresholds for low-confidence or high-ticket cases.</div>
+        </div>
+      </div>
+
+      <div class="formula-block">
+        <div class="f-head">Market Value Formula</div>
+        <div style="margin-top:12px">
+          Market Value = <span class="f-term">Base Guidance Value</span> × <span class="f-term">Location Multiplier</span> × <span class="f-term">Property Adjustment</span> × <span class="f-term">Condition/Age Adjustment</span> × <span class="f-term">Marketability Adjustment</span>
+        </div>
+        <div class="f-note" style="margin-top:10px">
+          Layer 1: Rules-based floor &amp; cap (guidance value + size sanity)<br>
+          Layer 2: Gradient boosting on engineered features → fair market band<br>
+          Layer 3: Quantile regression / conformal prediction → lower &amp; upper bounds
+        </div>
+        <hr style="border-color:var(--border);margin:16px 0">
+        <div class="f-head">Distress Value</div>
+        <div style="margin-top:8px">
+          Distress Value = Market Value × (1 − <span class="f-term">Liquidity Discount</span>)
+        </div>
+        <div class="f-note" style="margin-top:8px">
+          Prime apartment (clear title): 10–18% · Mid-market: 15–25% · Old/niche/legal issues: 25–40%
+        </div>
+        <hr style="border-color:var(--border);margin:16px 0">
+        <div class="f-head">Resale Potential Index</div>
+        <div style="margin-top:8px">
+          RPI = <span class="f-term">0.30·L</span> + <span class="f-term">0.20·F</span> + <span class="f-term">0.20·J</span> + <span class="f-term">0.10·A</span> + <span class="f-term">0.10·R</span> + <span class="f-term">0.10·M</span>
+        </div>
+        <div class="f-note" style="margin-top:6px">
+          L=Location · F=Fungibility · J=Legal clarity · A=Age · R=Rental attractiveness · M=Market balance
+        </div>
+      </div>
+
+      <div style="font-family:var(--serif);font-size:22px;color:var(--text);margin-bottom:16px">Liquidity Score Weights</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="weight-table">
+            <div class="weight-row">
+              <div class="weight-name">Micro-location demand &amp; accessibility</div>
+              <div class="weight-bar-wrap"><div class="progress-track"><div class="progress-fill gold" style="width:30%"></div></div></div>
+              <div class="weight-pct">30%</div>
+            </div>
+            <div class="weight-row">
+              <div class="weight-name">Property fungibility / standardization</div>
+              <div class="weight-bar-wrap"><div class="progress-track"><div class="progress-fill teal" style="width:20%"></div></div></div>
+              <div class="weight-pct">20%</div>
+            </div>
+            <div class="weight-row">
+              <div class="weight-name">Legal clarity &amp; title strength</div>
+              <div class="weight-bar-wrap"><div class="progress-track"><div class="progress-fill teal" style="width:20%"></div></div></div>
+              <div class="weight-pct">20%</div>
+            </div>
+            <div class="weight-row">
+              <div class="weight-name">Age &amp; physical condition</div>
+              <div class="weight-bar-wrap"><div class="progress-track"><div class="progress-fill gold" style="width:10%"></div></div></div>
+              <div class="weight-pct">10%</div>
+            </div>
+            <div class="weight-row">
+              <div class="weight-name">Occupancy &amp; rental attractiveness</div>
+              <div class="weight-bar-wrap"><div class="progress-track"><div class="progress-fill gold" style="width:10%"></div></div></div>
+              <div class="weight-pct">10%</div>
+            </div>
+            <div class="weight-row">
+              <div class="weight-name">Market supply-demand balance</div>
+              <div class="weight-bar-wrap"><div class="progress-track"><div class="progress-fill gold" style="width:10%"></div></div></div>
+              <div class="weight-pct">10%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div>ValuAI Pro &mdash; <span>AI-Powered Collateral Intelligence</span> for Indian NBFCs &mdash; Bengaluru Focus</div>
+    <div style="font-family:var(--mono);font-size:10px">Model v2.1.4 · Karnataka Guidance Values · © 2026</div>
+  </footer>
+
+</div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  STATE & STORAGE
+// ══════════════════════════════════════════════════
+const STATE = {
+  cases: [],
+  auditLog: [],
+  lastResult: null,
+  caseCounter: 1000
+};
+
+// Storage helpers
+async function saveToStorage(key, val) {
+  try { await window.storage.set(key, JSON.stringify(val)); } catch(e) {}
+}
+async function loadFromStorage(key) {
+  try {
+    const r = await window.storage.get(key);
+    return r ? JSON.parse(r.value) : null;
+  } catch(e) { return null; }
+}
+async function initStorage() {
+  const cases = await loadFromStorage('valuai-cases');
+  const audit = await loadFromStorage('valuai-audit');
+  const counter = await loadFromStorage('valuai-counter');
+  if (cases) STATE.cases = cases;
+  if (audit) STATE.auditLog = audit;
+  if (counter) STATE.caseCounter = counter;
+  renderPortfolio();
+  renderAudit();
+  updateDashboard();
+}
+initStorage();
+
+// ══════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════
+const BREADCRUMBS = {
+  dashboard: 'Dashboard',
+  estimate: 'New Estimate',
+  whatif: 'What-If Simulator',
+  portfolio: 'Portfolio View',
+  copilot: 'AI Copilot',
+  audit: 'Audit Trail',
+  how: 'Methodology'
+};
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  document.getElementById('breadcrumb').innerHTML = `<span>${BREADCRUMBS[name]}</span>`;
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════════
+function toast(icon, msg, dur=3500) {
+  const wrap = document.getElementById('toast-wrap');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<span class="t-icon">${icon}</span><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), dur);
+}
+
+// ══════════════════════════════════════════════════
+//  VALUATION ENGINE
+// ══════════════════════════════════════════════════
+async function runEstimate() {
+  const btn = document.getElementById('btn-analyze');
+  const btnText = document.getElementById('btn-analyze-text');
+  const spin = document.getElementById('spin1');
+  btn.disabled = true;
+  btnText.textContent = 'Analyzing…';
+  spin.style.display = 'block';
+
+  const address = document.getElementById('f-address').value || 'Whitefield, Bengaluru';
+  const type = document.getElementById('f-type').value;
+  const subtype = document.getElementById('f-subtype').value;
+  const area = document.getElementById('f-area').value || 1250;
+  const age = document.getElementById('f-age').value || 8;
+  const floor = document.getElementById('f-floor').value || 5;
+  const lift = document.getElementById('f-lift').value;
+  const occupancy = document.getElementById('f-occupancy').value;
+  const rent = document.getElementById('f-rent').value || 0;
+  const legal = document.getElementById('f-legal').value;
+  const notes = document.getElementById('f-notes').value;
+
+  const prompt = `You are a senior collateral valuation AI for Indian NBFCs. Analyze this property and return ONLY valid JSON — no markdown, no explanation outside JSON.
+
+Property Details:
+- Address: ${address}
+- Type: ${type} / ${subtype}
+- Area: ${area} sq ft
+- Age: ${age} years
+- Floor: ${floor}, Lift: ${lift}
+- Occupancy: ${occupancy}, Monthly Rent: ₹${rent}
+- Legal Status: ${legal}
+- Notes: ${notes || 'None'}
+
+Formulas to apply:
+- Market Value = Base Guidance Value × Location Multiplier × Property Adj × Condition Adj × Marketability Adj
+- Resale Index = 0.30·L + 0.20·F + 0.20·J + 0.10·A + 0.10·R + 0.10·M
+- Distress Value = Market Value × (1 - Liquidity Discount)
+- Distress discount: prime/clear title 10-18%, mid-market 15-25%, old/niche/legal 25-40%
+- Liquidation days: index 80-100→30-60d, 60-79→45-90d, 40-59→90-180d, <40→180+d
+- Confidence = 0.25·C_input + 0.25·C_data + 0.20·C_market + 0.20·C_agreement + 0.10·C_fraud
+
+Return exactly this JSON structure:
+{
+  "market_value_low": <number in lakhs>,
+  "market_value_high": <number in lakhs>,
+  "distress_value_low": <number in lakhs>,
+  "distress_value_high": <number in lakhs>,
+  "resale_index": <0-100>,
+  "time_to_sell_low": <days>,
+  "time_to_sell_high": <days>,
+  "confidence": <0.0-1.0>,
+  "liquidity_discount_pct": <percentage number>,
+  "guidance_value_per_sqft": <number>,
+  "market_value_per_sqft": <number>,
+  "key_drivers": ["driver1","driver2","driver3"],
+  "risk_flags": ["flag1","flag2"],
+  "policy_recommendation": "desktop-approve" | "field-review" | "legal-review",
+  "ltv_suggested_pct": <number>,
+  "one_line_summary": "<concise insight string>",
+  "underwriter_note": "<2-3 sentence underwriting note for credit memo>"
+}`;
+
+  let result;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(b => b.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    result = JSON.parse(clean);
+    toast('✓', 'Valuation complete');
+  } catch(e) {
+    result = fallbackResult(area, age, legal, occupancy, rent);
+    toast('⚠', 'Using deterministic fallback model');
+  }
+
+  STATE.lastResult = result;
+  renderResults(result, address, subtype, area);
+  saveCase(result, address, type, subtype, area, age);
+
+  btn.disabled = false;
+  btnText.textContent = '⬡ Re-run Analysis';
+  spin.style.display = 'none';
+}
+
+function fallbackResult(area, age, legal, occupancy, rent) {
+  const ageDiscount = Math.min(age * 0.8, 20);
+  const base = 7000 + Math.random() * 2000;
+  const mv_low = Math.round((base * area / 100000) * (1 - ageDiscount/100) * 0.9);
+  const mv_high = Math.round(mv_low * 1.2);
+  const ri = Math.max(30, Math.round(72 - ageDiscount + (occupancy==='rented' ? 5 : 0) + (legal.includes('clear') ? 5 : -15)));
+  const ld = ri >= 80 ? 12 : ri >= 65 ? 19 : ri >= 50 ? 25 : 35;
+  return {
+    market_value_low: mv_low, market_value_high: mv_high,
+    distress_value_low: Math.round(mv_low*(1-ld/100)), distress_value_high: Math.round(mv_high*(1-ld/100)),
+    resale_index: ri, time_to_sell_low: ri>=80?30:ri>=60?45:90, time_to_sell_high: ri>=80?60:ri>=60?90:180,
+    confidence: 0.65, liquidity_discount_pct: ld,
+    guidance_value_per_sqft: 5800, market_value_per_sqft: Math.round(mv_low*100000/area),
+    key_drivers: ['location_quality','standard_configuration','rental_signal'],
+    risk_flags: age>15?['building_age_high']:['moderate_competition'],
+    policy_recommendation: ri>=65?'desktop-approve':ri>=50?'field-review':'legal-review',
+    ltv_suggested_pct: Math.min(75, Math.round(ri*0.8)),
+    one_line_summary: 'AI-assisted estimate using deterministic model.',
+    underwriter_note: 'Property assessed via rule-based engine. Field verification recommended.'
+  };
+}
+
+function saveCase(result, address, type, subtype, area, age) {
+  const id = 'VLU-' + (++STATE.caseCounter);
+  const ts = new Date().toISOString();
+  const entry = { id, address, type, subtype, area, age, result, ts };
+  STATE.cases.unshift(entry);
+  STATE.auditLog.unshift({
+    ts, event: 'ESTIMATE', case: id,
+    user: 'Kiran Mehta', model: 'v2.1.4',
+    hash: btoa(id + ts).substring(0,12).toUpperCase()
+  });
+  saveToStorage('valuai-cases', STATE.cases);
+  saveToStorage('valuai-audit', STATE.auditLog);
+  saveToStorage('valuai-counter', STATE.caseCounter);
+  renderPortfolio();
+  renderAudit();
+  updateDashboard();
+}
+
+function renderResults(r, address, subtype, area) {
+  document.getElementById('results-placeholder').style.display = 'none';
+  const panel = document.getElementById('results-panel');
+  panel.style.display = 'flex';
+
+  const riColor = r.resale_index >= 80 ? 'gold' : r.resale_index >= 50 ? 'teal' : 'red';
+  const cfColor = r.confidence >= 0.7 ? 'gold' : r.confidence >= 0.5 ? 'teal' : 'red';
+  const policyClass = r.policy_recommendation === 'desktop-approve' ? 'policy-desktop' : r.policy_recommendation === 'field-review' ? 'policy-field' : 'policy-legal';
+  const policyLabel = r.policy_recommendation.replace(/-/g,' ').toUpperCase();
+  const riLabel = r.resale_index >= 80 ? '🟢 Highly Liquid' : r.resale_index >= 50 ? '🟡 Moderate Liquidity' : '🔴 Illiquid / Specialized';
+
+  const driversHTML = (r.key_drivers||[]).map(d => `<span class="chip chip-green">✓ ${d.replace(/_/g,' ')}</span>`).join('');
+  const flagsHTML = (r.risk_flags||[]).map(f => `<span class="chip chip-red">⚠ ${f.replace(/_/g,' ')}</span>`).join('');
+
+  panel.innerHTML = `
+    <div class="r-card highlight-gold">
+      <div class="r-tag">📍 ${address} · ${subtype.replace(/_/g,' ')} · ${area} sq ft</div>
+      <div class="r-val">₹${r.market_value_low}L – ₹${r.market_value_high}L</div>
+      <div class="r-sub">Estimated Market Value Range</div>
+      <div class="chips mt-8">
+        <span class="chip chip-gold">₹${(r.market_value_per_sqft||0).toLocaleString()}/sqft market</span>
+        <span class="chip chip-gold">₹${(r.guidance_value_per_sqft||0).toLocaleString()}/sqft guidance</span>
+        <span class="chip chip-gold">LTV ~${r.ltv_suggested_pct||70}% suggested</span>
+      </div>
+    </div>
+
+    <div class="r-pair">
+      <div class="r-card">
+        <div class="r-tag">🔥 Distress / Forced-Sale Value</div>
+        <div class="r-val sm">₹${r.distress_value_low}L – ₹${r.distress_value_high}L</div>
+        <div class="r-sub">−${r.liquidity_discount_pct}% liquidity discount applied</div>
+      </div>
+      <div class="r-card">
+        <div class="r-tag">🕐 Time to Liquidate</div>
+        <div class="r-val sm">${r.time_to_sell_low}–${r.time_to_sell_high} days</div>
+        <div class="r-sub">Estimated market exit window</div>
+      </div>
+    </div>
+
+    <div class="r-card">
+      <div class="r-tag">⚡ Resale Potential Index</div>
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <div class="r-val">${r.resale_index}</div>
+        <div class="r-sub">/ 100</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill ${riColor}" style="width:${r.resale_index}%"></div>
+      </div>
+      <div class="r-sub mt-8">${riLabel}</div>
+    </div>
+
+    <div class="r-card">
+      <div class="r-tag">🎯 Confidence Score & Policy</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-family:var(--mono);font-size:28px;font-weight:500;color:var(--text)">${r.confidence.toFixed(2)}</div>
+        <div class="policy-pill ${policyClass}">${policyLabel}</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill ${cfColor}" style="width:${(r.confidence*100).toFixed(0)}%"></div>
+      </div>
+    </div>
+
+    <div class="r-card">
+      <div class="r-tag">✅ Key Value Drivers</div>
+      <div class="chips">${driversHTML}</div>
+      <div class="r-tag mt-12">⚠ Risk Flags</div>
+      <div class="chips">${flagsHTML}</div>
+    </div>
+
+    <div class="r-card highlight-teal">
+      <div class="r-tag">📝 Underwriter Note</div>
+      <div style="font-size:13px;line-height:1.7;color:var(--text2)">${r.underwriter_note || r.one_line_summary}</div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════
+//  PORTFOLIO & AUDIT RENDER
+// ══════════════════════════════════════════════════
+function renderPortfolio() {
+  const tbody = document.getElementById('portfolio-tbody');
+  const count = document.getElementById('portfolio-count');
+  if (!STATE.cases.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:40px">No cases yet. Run your first estimate →</td></tr>';
+    if(count) count.textContent = '0 cases';
+    return;
+  }
+  if(count) count.textContent = STATE.cases.length + ' cases';
+  tbody.innerHTML = STATE.cases.map(c => {
+    const r = c.result;
+    const pClass = r.policy_recommendation === 'desktop-approve' ? 'badge-green' : r.policy_recommendation === 'field-review' ? 'badge-amber' : 'badge-red';
+    const pLabel = r.policy_recommendation === 'desktop-approve' ? 'DESKTOP' : r.policy_recommendation === 'field-review' ? 'FIELD' : 'LEGAL';
+    const d = new Date(c.ts).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'2-digit'});
+    return `<tr>
+      <td class="mono" style="color:var(--teal)">${c.id}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.address}</td>
+      <td>${c.subtype?.replace(/_/g,' ')}</td>
+      <td class="mono">${Number(c.area).toLocaleString()} sqft</td>
+      <td class="gold">₹${r.market_value_low}L–${r.market_value_high}L</td>
+      <td class="mono">${r.resale_index}/100</td>
+      <td class="mono">${r.confidence?.toFixed(2)}</td>
+      <td><span class="badge ${pClass}">${pLabel}</span></td>
+      <td class="mono" style="font-size:11px">${d}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAudit() {
+  const tbody = document.getElementById('audit-tbody');
+  if (!STATE.auditLog.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:40px">No audit entries yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = STATE.auditLog.map(a => {
+    const d = new Date(a.ts).toLocaleString('en-IN');
+    return `<tr>
+      <td class="mono" style="font-size:11px">${d}</td>
+      <td><span class="badge badge-teal">${a.event}</span></td>
+      <td class="mono" style="color:var(--teal)">${a.case}</td>
+      <td>${a.user}</td>
+      <td class="mono">${a.model}</td>
+      <td class="mono" style="font-size:11px;color:var(--text3)">${a.hash}</td>
+    </tr>`;
+  }).join('');
+}
+
+function updateDashboard() {
+  if (!STATE.cases.length) return;
+  const recent = STATE.cases.slice(0, 5);
+  const tbody = document.getElementById('recent-cases-tbody');
+  if (tbody) {
+    tbody.innerHTML = recent.map(c => {
+      const r = c.result;
+      const pClass = r.policy_recommendation === 'desktop-approve' ? 'badge-green' : r.policy_recommendation === 'field-review' ? 'badge-amber' : 'badge-red';
+      const pLabel = r.policy_recommendation === 'desktop-approve' ? 'DESKTOP' : r.policy_recommendation === 'field-review' ? 'FIELD' : 'LEGAL';
+      const short = c.address.length > 20 ? c.address.substring(0,20)+'…' : c.address;
+      return `<tr>
+        <td><div class="mono">${short}</div></td>
+        <td><span class="gold">${r.resale_index}</span></td>
+        <td><span class="badge ${pClass}">${pLabel}</span></td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  WHAT-IF SIMULATOR (deterministic, instant)
+// ══════════════════════════════════════════════════
+const BASE = { mv_low:95, mv_high:115, ri:72, ld:19, ts_low:45, ts_high:90 };
+
+function runWhatIf() {
+  const age = parseInt(document.getElementById('sl-age').value);
+  const area = parseInt(document.getElementById('sl-area').value);
+  const rent = parseInt(document.getElementById('sl-rent').value);
+  const floor = parseInt(document.getElementById('sl-floor').value);
+  const legal = document.getElementById('sl-legal').value;
+  const market = document.getElementById('sl-market').value;
+
+  // Compute adjustments
+  const ageFactor = 1 - Math.max(0, (age - 5) * 0.012);
+  const areaFactor = area < 600 ? 0.88 : area > 3000 ? 0.94 : 1.0;
+  const floorFactor = floor === 0 ? 0.94 : floor <= 3 ? 0.97 : floor >= 15 ? 0.95 : 1.0;
+  const rentBoost = rent > 50000 ? 1.06 : rent > 25000 ? 1.02 : rent === 0 ? 0.96 : 1.0;
+  const legalMap = { freehold_clear: 1.0, freehold_disputed: 0.85, leasehold: 0.90, encumbered: 0.80 };
+  const marketMap = { prime: 1.35, mid: 1.0, peripheral: 0.78, distressed: 0.60 };
+  const legalFactor = legalMap[legal] || 1.0;
+  const marketFactor = marketMap[market] || 1.0;
+
+  const total = ageFactor * areaFactor * floorFactor * rentBoost * legalFactor * marketFactor;
+  const mv_low = Math.round(BASE.mv_low * total);
+  const mv_high = Math.round(BASE.mv_high * total);
+
+  // Resale index
+  const legalRiBoost = { freehold_clear: 5, freehold_disputed: -15, leasehold: -8, encumbered: -18 };
+  const marketRiBoost = { prime: 12, mid: 0, peripheral: -10, distressed: -22 };
+  const ri = Math.min(100, Math.max(15, BASE.ri + (legalRiBoost[legal]||0) + (marketRiBoost[market]||0) - Math.max(0,(age-10)*0.5)));
+
+  // Liquidity discount
+  const ld = ri >= 80 ? 12 : ri >= 65 ? 19 : ri >= 50 ? 26 : 36;
+
+  // Time to sell
+  const ts_low = ri >= 80 ? 30 : ri >= 60 ? 45 : 90;
+  const ts_high = ri >= 80 ? 60 : ri >= 60 ? 90 : 180;
+
+  // Delta calcs
+  const riDelta = ri - BASE.ri;
+  const riDeltaStr = riDelta > 0 ? `+${riDelta.toFixed(1)} vs base` : `${riDelta.toFixed(1)} vs base`;
+  const mvDelta = Math.round((mv_low - BASE.mv_low));
+
+  // Policy
+  const policy = ri >= 65 ? 'desktop-approve' : ri >= 50 ? 'field-review' : 'legal-review';
+  const policyClass = policy === 'desktop-approve' ? 'policy-desktop' : policy === 'field-review' ? 'policy-field' : 'policy-legal';
+  const policyLabel = policy.replace(/-/g,' ').toUpperCase();
+
+  // Insight
+  const legalInsights = { freehold_clear: 'Clear freehold title maximizes liquidity.', freehold_disputed: '⚠ Title dispute significantly reduces resale index and warrants legal review.', leasehold: 'Leasehold reduces collateral quality — verify residual tenure.', encumbered: '⚠ Encumbrance flag: existing lien detected. Legal review mandatory.' };
+  const marketInsights = { prime: 'Prime micro-market supports strong exit liquidity.', mid: 'Mid-market location with adequate demand depth.', peripheral: 'Peripheral location — expect longer liquidation window.', distressed: '⚠ Distressed / oversupplied area — high liquidation risk.' };
+
+  document.getElementById('wi-mv-adj').textContent = `₹${mv_low}L – ₹${mv_high}L`;
+  document.getElementById('wi-mv-adj').className = 'comp-val ' + (mvDelta >= 0 ? 'better' : 'worse');
+  document.getElementById('wi-ri-adj').textContent = ri.toFixed(0);
+  document.getElementById('wi-ri-adj').className = 'comp-val ' + (riDelta >= 0 ? 'better' : 'worse');
+  document.getElementById('wi-ri-delta').textContent = riDeltaStr;
+  document.getElementById('wi-ld-adj').textContent = ld + '%';
+  document.getElementById('wi-ts-adj').textContent = `${ts_low}–${ts_high} days`;
+  document.getElementById('wi-policy-pill').innerHTML = `<div class="policy-pill ${policyClass}" style="display:inline-block">${policyLabel}</div>`;
+  document.getElementById('wi-insight').textContent = (legalInsights[legal]||'') + ' ' + (marketInsights[market]||'');
+}
+runWhatIf();
+
+// ══════════════════════════════════════════════════
+//  AI COPILOT
+// ══════════════════════════════════════════════════
+const chatHistory = [];
+let msgId = 0;
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+function setAndSend(text) {
+  document.getElementById('chat-input').value = text;
+  sendChat();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendMsg('user', msg);
+  chatHistory.push({ role: 'user', content: msg });
+  document.getElementById('btn-send').disabled = true;
+  const typingId = appendMsg('ai', '<div class="dots"><span></span><span></span><span></span></div>', true);
+
+  const system = `You are ValuAI Copilot, an expert AI underwriting copilot for Indian NBFCs specializing in property-backed lending (LAP, home loans, commercial mortgages). You help credit managers assess collateral value, liquidity risk, distress value, and enforcement risk.
+
+Your expertise:
+- Indian real estate markets (Bengaluru focus: Whitefield, Koramangala, HSR, Sarjapur, Indiranagar, Hebbal, etc.)
+- Karnataka Dept of Stamps & Registration — circle rates / guidance values
+- NBFC lending norms, RBI LTV guidelines (75% for ≤30L, 80% for 30-75L, 75% for >75L residential; 55-65% commercial)
+- Valuation formula: Market Value = Guidance Value × Location × Property Adj × Condition × Marketability
+- Resale Index = 0.30·L + 0.20·F + 0.20·J + 0.10·A + 0.10·R + 0.10·M (80-100=highly liquid, 50-79=moderate, <50=illiquid)
+- Distress discounts: prime/clear title 10-18%, mid-market 15-25%, old/niche/legal issues 25-40%
+- Liquidation timeline: index 80-100→30-60d, 60-79→45-90d, 40-59→90-180d, <40→180+d
+- Policy recommendations: desktop-approve (high confidence, clean), field-review (moderate risk), legal-review (title/legal issues)
+
+Respond as a concise, expert underwriting specialist. Use specific numbers, ranges, and India-relevant guidance. Format with structure when helpful. Keep responses under 300 words unless writing a formal credit memo.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system,
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content.map(b => b.text||'').join('');
+    chatHistory.push({ role: 'assistant', content: reply });
+    updateMsg(typingId, reply);
+  } catch(e) {
+    updateMsg(typingId, '⚠ Connection error. Please try again.');
+  }
+  document.getElementById('btn-send').disabled = false;
+}
+
+function appendMsg(role, content, isTyping=false) {
+  const id = 'msg-' + (++msgId);
+  const container = document.getElementById('chat-messages');
+  const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  const formatted = isTyping ? content : formatMsg(content);
+  container.innerHTML += `<div class="msg ${role}" id="${id}"><div class="msg-bubble">${formatted}</div><div class="msg-time">${now}</div></div>`;
+  container.scrollTop = container.scrollHeight;
+  return id;
+}
+
+function updateMsg(id, content) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.querySelector('.msg-bubble').innerHTML = formatMsg(content);
+    document.getElementById('chat-messages').scrollTop = 99999;
+  }
+}
+
+function formatMsg(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/`(.*?)`/g,'<code style="font-family:var(--mono);background:var(--surface2);padding:1px 4px;border-radius:3px;font-size:11px">$1</code>')
+    .replace(/\n/g,'<br>');
+}
+</script>
+</body>
+</html>
