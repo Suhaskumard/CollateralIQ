@@ -80,6 +80,7 @@ npm install
 npm run dev                # → http://localhost:8000
 ```
 
+```
 ### 2. Frontend
 ```bash
 cd frontend
