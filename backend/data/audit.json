@@ -1,0 +1,132 @@
+[
+  {
+    "id": "73e0cc05-5128-49a5-bd22-2f56f5125c76",
+    "timestamp": "2026-05-01T11:15:03.429Z",
+    "action": "ESTIMATE_RUN",
+    "user": "analyst",
+    "details": {
+      "address": "abc",
+      "area": 1500,
+      "age": 10,
+      "legal": "freehold_clear",
+      "policy": "desktop-approve",
+      "mv_low": 84,
+      "mv_high": 99
+    }
+  },
+  {
+    "id": "3d07c35b-f973-4746-aebc-fd8a5017c569",
+    "timestamp": "2026-05-01T11:11:39.746Z",
+    "action": "ESTIMATE_RUN",
+    "user": "analyst",
+    "details": {
+      "address": "abc",
+      "area": 2500,
+      "age": 10,
+      "legal": "freehold_clear",
+      "policy": "desktop-approve",
+      "mv_low": 141,
+      "mv_high": 165
+    }
+  },
+  {
+    "id": "2fe6ec45-e83f-4650-9d8e-d69dd63177e7",
+    "timestamp": "2026-05-01T11:09:30.328Z",
+    "action": "ESTIMATE_RUN",
+    "user": "analyst",
+    "details": {
+      "address": "12 HSR Layout Sector 4, Bengaluru",
+      "area": 1500,
+      "age": 7,
+      "legal": "freehold_clear",
+      "policy": "desktop-approve",
+      "mv_low": 124,
+      "mv_high": 146
+    }
+  },
+  {
+    "id": "9993f0df-a195-4a06-8536-e67ce21751e6",
+    "timestamp": "2026-05-01T11:09:08.323Z",
+    "action": "ESTIMATE_RUN",
+    "user": "analyst",
+    "details": {
+      "address": "12 HSR Layout Sector 4, Bengaluru",
+      "area": 1500,
+      "age": 7,
+      "legal": "freehold_clear",
+      "policy": "desktop-approve",
+      "mv_low": 147,
+      "mv_high": 173
+    }
+  },
+  {
+    "id": "3a45cca9-fa7c-4a9d-8394-49216c104358",
+    "timestamp": "2026-05-01T10:35:33.990Z",
+    "action": "ESTIMATE_RUN",
+    "user": "analyst",
+    "details": {
+      "address": "Unknown",
+      "area": 1200,
+      "age": 5,
+      "legal": "freehold_clear",
+      "policy": "desktop-approve",
+      "mv_low": 102,
+      "mv_high": 119
+    }
+  },
+  {
+    "id": "e459bee8-5696-4dc9-8c43-54f57bfe8ba0",
+    "timestamp": "2026-05-01T10:25:38.774Z",
+    "action": "CASE_SAVED",
+    "user": "analyst",
+    "details": {
+      "id": "fc85eaaf-95a5-42d0-bc6f-ecb3db4f0fcb",
+      "address": "abc"
+    }
+  },
+  {
+    "id": "71dff899-e0d9-4b74-b028-5e7b5a00f732",
+    "timestamp": "2026-05-01T10:25:24.798Z",
+    "action": "ESTIMATE_RUN",
+    "user": "analyst",
+    "details": {
+      "address": "abc",
+      "area": 1250,
+      "age": 8,
+      "legal": "freehold_clear",
+      "policy": "desktop-approve",
+      "mv_low": 168,
+      "mv_high": 198
+    }
+  },
+  {
+    "id": "6d47f371-dd61-48dd-9464-cac565e46bcd",
+    "timestamp": "2026-05-01T10:23:24.644Z",
+    "action": "ESTIMATE_RUN",
+    "user": "analyst",
+    "details": {
+      "address": "42 Koramangala 5th Block, Bengaluru",
+      "area": 1250,
+      "age": 8,
+      "legal": "freehold_clear",
+      "policy": "desktop-approve",
+      "mv_low": 121,
+      "mv_high": 142
+    }
+  },
+  {
+    "id": "678922a7-52f7-456a-94fe-1688c66e58c7",
+    "timestamp": "2026-05-01T10:21:38.514Z",
+    "action": "ESTIMATE_RUN",
+    "user": "analyst",
+    "details": {
+      "address": "42 Koramangala 5th Block",
+      "area": 1250,
+      "age": 8,
+      "legal": "freehold_clear",
+      "policy": "desktop-approve",
+      "mv_low": 121,
+      "mv_high": 142
+    }
+  }
+]

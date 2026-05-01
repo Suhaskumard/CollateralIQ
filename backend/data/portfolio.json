@@ -1,0 +1,17 @@
+[
+  {
+    "id": "fc85eaaf-95a5-42d0-bc6f-ecb3db4f0fcb",
+    "date": "2026-05-01T10:25:38.769Z",
+    "address": "abc",
+    "propertyType": "commercial",
+    "subtype": "retail",
+    "area": "1250",
+    "age": "8",
+    "mv_low": 168,
+    "mv_high": 198,
+    "resaleIndex": 83,
+    "ltvMax": 75,
+    "policy": "desktop-approve",
+    "confidence": "high"
+  }
+]
