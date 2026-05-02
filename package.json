@@ -1,9 +1,10 @@
 {
-  "name": "collateraliq",
+"name": "collateraliq",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "vercel-build": "npm --prefix frontend install && npm --prefix frontend run build",
     "start": "node backend/server.js"
   },
   "dependencies": {
