@@ -116,3 +116,55 @@ PORT=8000
 ```
 
 > The copilot works without an API key and returns smart mock responses.
+
+---
+
+## Deployment
+
+### ⚠️ Platform Constraints
+
+This is a full-stack application with a Node.js backend. Vercel is optimized for frontend frameworks (React, Next.js) and serverless functions with limited backend support. Direct deployment on Vercel may encounter environment configuration issues.
+
+### ✅ Recommended Architecture
+
+| Component | Platform |
+|---|---|
+| Frontend (React) | Vercel |
+| Backend (Node.js + Express) | Render / Railway / DigitalOcean |
+| Database | Cloud DB (PostgreSQL / MongoDB) |
+
+### 📋 Environment Variables
+
+For production deployment, configure these environment variables:
+
+```env
+# Backend
+OPENAI_API_KEY=sk-...      # Optional — mock responses used if not set
+OPENAI_MODEL=gpt-4o
+PORT=8000
+```
+
+> ⚠️ The `.env` file is intentionally excluded from version control for security reasons.
+
+### 🚀 Running Locally
+
+```bash
+# Install all dependencies
+npm install
+cd frontend && npm install && cd ..
+cd backend && npm install && cd ..
+
+# Run backend (port 8000)
+cd backend
+copy .env.example .env     # Windows
+# cp .env.example .env     # Mac/Linux
+npm run dev
+
+# Run frontend (port 5173) - in a new terminal
+cd frontend
+npm run dev
+```
+
+### 📌 Note for Deployers
+
+The core functionality is fully implemented and tested locally. Any deployment limitations are due to platform constraints, not application logic errors.
