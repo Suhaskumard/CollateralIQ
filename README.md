@@ -2,6 +2,8 @@
 
 > AI-powered collateral intelligence platform for Indian NBFCs — property valuation, risk analysis, portfolio management & AI copilot.
 
+Live deployment: https://collateraliq.vercel.app
+
 ## Tech Stack
 
 | Layer | Technology |

@@ -11,10 +11,13 @@ import fs   from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const DATA_DIR = path.join(
+const SEED_DATA_DIR = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   '..', '..', 'data'
 );
+const DATA_DIR = process.env.VERCEL
+  ? path.join('/tmp', 'collateraliq-data')
+  : SEED_DATA_DIR;
 
 // Ensure data directory exists on module load
 await fs.mkdir(DATA_DIR, { recursive: true }).catch(() => {});
@@ -27,7 +30,12 @@ export function createStore(filename) {
       const raw = await fs.readFile(filePath, 'utf-8');
       return JSON.parse(raw);
     } catch {
-      return [];
+      try {
+        const seed = await fs.readFile(path.join(SEED_DATA_DIR, filename), 'utf-8');
+        return JSON.parse(seed);
+      } catch {
+        return [];
+      }
     }
   }
 
